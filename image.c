@@ -186,8 +186,8 @@ void volume (SDL_Surface *fenetre, int *vol)
 	v4 = IMG_Load("Resources/volume4.png");
 	v5 = IMG_Load("Resources/volume5.png");
 	SDL_Rect Pos;
-	Pos.x=234;
-	Pos.y=184;
+	Pos.x=23;
+	Pos.y=40;
 	switch (*vol)
 	{	
 		case 0:
@@ -241,6 +241,10 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							break;
 					case (SDLK_LEFT):
 							*vol -= MIX_MAX_VOLUME / 4;
+							if (*vol<0)
+							{
+								*vol = 0;
+							}
 							Mix_Volume(-1, *vol);
 							background (fenetre);
 							titreoption (fenetre);
@@ -251,6 +255,10 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							break;
 					case (SDLK_RIGHT):
 							*vol += MIX_MAX_VOLUME / 4;
+							if (*vol>MIX_MAX_VOLUME)
+							{
+								*vol = MIX_MAX_VOLUME;
+							}
 							Mix_Volume(-1, *vol);
 							background (fenetre);
 							titreoption (fenetre);
@@ -266,7 +274,7 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 					if ((370.5<=x && x<=529.5) && (525<=y && y<=590))
 					{
 						quitoptionshover (fenetre);
-						SDL_PollEvent(&event);
+						SDL_WaitEvent(&event);
 						if (event.type==SDL_MOUSEBUTTONDOWN)
 						{
 							if (event.button.button==SDL_BUTTON_LEFT)
@@ -275,6 +283,59 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							}
 						}
 					}
+/*
+					else if (184<=y && y<=268 && 440<=x && x<=470)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 64;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}
+					else if (184<=y && y<=268 && 244<=x && x<=274)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 0;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}
+					else if (184<=y && y<=268 && 274<=x && x<=304)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 32;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}
+*/
 					else
 					{
 						quitoptions (fenetre);
@@ -282,7 +343,8 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 					break;
 
 			}
-		
+
+	SDL_Flip(fenetre);
 	}
 	*choix = 0;
 	*once = 1;
