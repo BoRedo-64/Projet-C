@@ -12,7 +12,7 @@ int main (int argc, char *argv[])
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	int x,y,choix=0, e=1, once = 1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1;
+	int x,y,choix=0, e=1, once = 1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2;
 	SDL_Surface *fenetre = NULL;
 	Mix_Music *bgmusic = Mix_LoadMUS("Resources/menu.mp3");
 	Mix_Chunk *hovermusic = Mix_LoadWAV("Resources/slash.wav");
@@ -52,7 +52,7 @@ int main (int argc, char *argv[])
 				break;
 
 			case 2: //options
-				menuoption (fenetre,&choix,&once,&volume);
+				menuoption (fenetre,&choix,&once,&volume,&volume2);
 				break;
 			
 			case 3: //credits

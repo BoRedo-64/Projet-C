@@ -177,17 +177,30 @@ void quitoptionshover (SDL_Surface *fenetre)
 	SDL_BlitSurface(qoh,NULL,fenetre,&qohPos);
 }
 
-void volume (SDL_Surface *fenetre, int *vol)
+void volume (SDL_Surface *fenetre, int *vol, int *vol2)
 {
-	SDL_Surface *v1,*v2,*v3,*v4,*v5;
+	SDL_Surface *v1,*v2,*v3,*v4,*v5, *music, *sound;
 	v1 = IMG_Load("Resources/volume1.png");
 	v2 = IMG_Load("Resources/volume2.png");
 	v3 = IMG_Load("Resources/volume3.png");
 	v4 = IMG_Load("Resources/volume4.png");
 	v5 = IMG_Load("Resources/volume5.png");
+	music = IMG_Load("Resources/musicicon.png");
+	sound = IMG_Load("Resources/soundicon.png");
+	SDL_Rect soundPos;
+	soundPos.x=93;
+	soundPos.y=150;	
+	SDL_Rect musicPos;
+	musicPos.x=93;
+	musicPos.y=250;
 	SDL_Rect Pos;
-	Pos.x=23;
-	Pos.y=40;
+	Pos.x=83;
+	Pos.y=0;
+	SDL_Rect Pos2; //
+	Pos2.x=83;//
+	Pos2.y=100;//
+	SDL_BlitSurface(sound,NULL,fenetre,&soundPos);
+	SDL_BlitSurface(music,NULL,fenetre,&musicPos);
 	switch (*vol)
 	{	
 		case 0:
@@ -207,10 +220,29 @@ void volume (SDL_Surface *fenetre, int *vol)
 			SDL_BlitSurface(v5,NULL,fenetre,&Pos);
 			break;
 	}
+	switch (*vol2)//
+	{	
+		case 0:
+			SDL_BlitSurface(v1,NULL,fenetre,&Pos2);
+			break;
+		case 32:
+			SDL_BlitSurface(v2,NULL,fenetre,&Pos2);
+			break;
+		case 64:
+			SDL_BlitSurface(v3,NULL,fenetre,&Pos2);
+			break;
+		case 96:
+			SDL_BlitSurface(v4,NULL,fenetre,&Pos2);
+			break;
+
+		case 128:
+			SDL_BlitSurface(v5,NULL,fenetre,&Pos2);
+			break;
+	}//
 	SDL_Flip(fenetre);
 }
 
-void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
+void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol, int *vol2)
 {
 	SDL_Event event;
 	int x,y,l=1;
@@ -219,7 +251,7 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 	background (fenetre);
 	titreoption (fenetre);
 	quitoptions (fenetre);
-	volume (fenetre,vol);
+	volume (fenetre,vol,vol2);
 	while (l)
 	{	
 		SDL_PollEvent(&event);
@@ -249,7 +281,7 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							background (fenetre);
 							titreoption (fenetre);
 							quitoptions (fenetre);
-							volume (fenetre,vol);
+							volume (fenetre,vol,vol2);
 							Mix_PlayChannel(-1, hovermusic, 0);
 							SDL_Delay(100);
 							break;
@@ -263,8 +295,34 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							background (fenetre);
 							titreoption (fenetre);
 							quitoptions (fenetre);
-							volume (fenetre,vol);
+							volume (fenetre,vol,vol2);
 							Mix_PlayChannel(-1, hovermusic, 0);
+							SDL_Delay(100);
+							break;
+					case (SDLK_UP):
+							*vol2 += MIX_MAX_VOLUME / 4;
+							if (*vol2>MIX_MAX_VOLUME)
+							{
+								*vol2 = MIX_MAX_VOLUME;
+							}
+							Mix_VolumeMusic(*vol2);
+							background (fenetre);
+							titreoption (fenetre);
+							quitoptions (fenetre);
+							volume (fenetre,vol,vol2);
+							SDL_Delay(100);
+							break;
+					case (SDLK_DOWN):
+							*vol2 -= MIX_MAX_VOLUME / 4;
+							if (*vol2<0)
+							{
+								*vol2 = 0;
+							}
+							Mix_VolumeMusic(*vol2);
+							background (fenetre);
+							titreoption (fenetre);
+							quitoptions (fenetre);
+							volume (fenetre,vol,vol2);
 							SDL_Delay(100);
 							break;
 				}
@@ -283,25 +341,7 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 							}
 						}
 					}
-/*
-					else if (184<=y && y<=268 && 440<=x && x<=470)
-					{
-						SDL_WaitEvent(&event);
-						if (event.type==SDL_MOUSEBUTTONDOWN)
-						{
-							if (event.button.button==SDL_BUTTON_LEFT)
-							{
-								*vol = 64;
-								Mix_Volume(-1, *vol);
-								background (fenetre);
-								titreoption (fenetre);
-								quitoptions (fenetre);
-								volume (fenetre,vol);
-								Mix_PlayChannel(-1, hovermusic, 0);
-							}
-						}
-					}
-					else if (184<=y && y<=268 && 244<=x && x<=274)
+					else if (150<=y && y<=231 && 225<=x && x<=300)
 					{
 						SDL_WaitEvent(&event);
 						if (event.type==SDL_MOUSEBUTTONDOWN)
@@ -313,12 +353,12 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 								background (fenetre);
 								titreoption (fenetre);
 								quitoptions (fenetre);
-								volume (fenetre,vol);
+								volume (fenetre,vol,vol2);
 								Mix_PlayChannel(-1, hovermusic, 0);
 							}
 						}
 					}
-					else if (184<=y && y<=268 && 274<=x && x<=304)
+					else if (150<=y && y<=231 && 315<=x && x<=440)
 					{
 						SDL_WaitEvent(&event);
 						if (event.type==SDL_MOUSEBUTTONDOWN)
@@ -330,12 +370,142 @@ void menuoption (SDL_Surface *fenetre, int *choix, int *once,  int *vol)
 								background (fenetre);
 								titreoption (fenetre);
 								quitoptions (fenetre);
-								volume (fenetre,vol);
+								volume (fenetre,vol,vol2);
 								Mix_PlayChannel(-1, hovermusic, 0);
 							}
 						}
 					}
-*/
+					else if (150<=y && y<=231 && 455<=x && x<=590)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 64;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}
+					else if (150<=y && y<=231 && 580<=x && x<=710)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 96;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}
+					else if (150<=y && y<=231 && 690<=x && x<=780)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol = 128;
+								Mix_Volume(-1, *vol);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+								Mix_PlayChannel(-1, hovermusic, 0);
+							}
+						}
+					}///////
+					else if (250<=y && y<=331 && 225<=x && x<=300)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol2 = 0;
+								Mix_VolumeMusic(*vol2);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+							}
+						}
+					}
+					else if (250<=y && y<=331 && 315<=x && x<=440)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol2 = 32;
+								Mix_VolumeMusic(*vol2);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+							}
+						}
+					}
+					else if (250<=y && y<=331 && 455<=x && x<=590)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol2 = 64;
+								Mix_VolumeMusic(*vol2);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+							}
+						}
+					}
+					else if (250<=y && y<=331 && 580<=x && x<=710)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol2 = 96;
+								Mix_VolumeMusic(*vol2);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+							}
+						}
+					}
+					else if (250<=y && y<=331 && 690<=x && x<=780)
+					{
+						SDL_WaitEvent(&event);
+						if (event.type==SDL_MOUSEBUTTONDOWN)
+						{
+							if (event.button.button==SDL_BUTTON_LEFT)
+							{
+								*vol2 = 128;
+								Mix_VolumeMusic(*vol2);
+								background (fenetre);
+								titreoption (fenetre);
+								quitoptions (fenetre);
+								volume (fenetre,vol,vol2);
+							}
+						}
+					}
 					else
 					{
 						quitoptions (fenetre);

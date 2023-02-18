@@ -35,10 +35,10 @@ void creditshover(fenetre);
 void quit(fenetre);
 void quithover(fenetre);
 void titreoption (fenetre);
-void volume (fenetre,vol);
+void volume (fenetre,vol,vol2);
 void quitoptions (fenetre);
 void quitoptionshover (fenetre);
-void menuoption(fenetre,choix,once,volume);
+void menuoption(fenetre,choix,once,volume,volume2);
 void resolution (fenetre);
 void brightness (fenetre);
 
