@@ -12,13 +12,14 @@ int main (int argc, char *argv[])
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	int x,y,choix=0, e=1, once = 1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2;
+	int x,y,choix=0, e=1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2,full=0;
 	SDL_Surface *fenetre = NULL;
 	Mix_Music *bgmusic = Mix_LoadMUS("Resources/menu.mp3");
 	Mix_Chunk *hovermusic = Mix_LoadWAV("Resources/slash.wav");
 	int Mix_VolumeMusic(int volume);
 	int Mix_VolumeChunk(Mix_Chunk *hovermusic, int volume);
 	SDL_Event event;
+	fenetre = SDL_SetVideoMode(900,600,32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
 
 	
 	//Boucle du jeu
@@ -28,10 +29,9 @@ int main (int argc, char *argv[])
 		switch (choix)
 		{
 			case 0:
-				if (once)
+				//Affichage par defaut
+				if ((SDL_GetTicks()/1000)%3==0)
 				{
-					//Affichage par defaut
-					fenetre = SDL_SetVideoMode(900,600,32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
 					if (no)
 					{
 						Mix_PlayMusic(bgmusic, -1);
@@ -44,15 +44,14 @@ int main (int argc, char *argv[])
 					credits(fenetre);
 					quit(fenetre);
 					text (fenetre);
-					once = 0;
+					break;
 				}
-				break;
 
 			case 1: //play
 				break;
 
 			case 2: //options
-				menuoption (fenetre,&choix,&once,&volume,&volume2);
+				menuoption (fenetre,&choix,&volume,&volume2,&full);
 				break;
 			
 			case 3: //credits
@@ -150,7 +149,7 @@ int main (int argc, char *argv[])
 						}
 					}
 				}
-				else if ((281.5<=x && x<=570.5) && (360<=y && y<=456))
+				else if ((281.5<=x && x<=570.5) && (360<=y && y<=430))
 				{
 					choix = 6;
 					SDL_WaitEvent(&event);
@@ -162,7 +161,7 @@ int main (int argc, char *argv[])
 						}
 					}
 				}
-				else if ((330<=x && x<=618) && (440<=y && y<=509))
+				else if ((330<=x && x<=618) && (450<=y && y<=509))
 				{
 					choix = 7;
 					SDL_WaitEvent(&event);

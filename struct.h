@@ -38,9 +38,8 @@ void titreoption (fenetre);
 void volume (fenetre,vol,vol2);
 void quitoptions (fenetre);
 void quitoptionshover (fenetre);
-void menuoption(fenetre,choix,once,volume,volume2);
-void resolution (fenetre);
-void brightness (fenetre);
+void fullscreen (fenetre,full);
+void menuoption(fenetre,choix,volume,volume2,full);
 
 #endif
 
