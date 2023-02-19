@@ -61,30 +61,42 @@ int main (int argc, char *argv[])
 				if (e==1)
 				{
 					playhover (fenetre);
+					options(fenetre);
+					credits(fenetre);
+					quit(fenetre);
 					Mix_PlayChannel(-1, hovermusic, 0);
 					e=0;
 				}
 				break;
 			case 5:
-				optionshover (fenetre);
 				if (e==1)
 				{
+					play (fenetre);
+					optionshover(fenetre);
+					credits(fenetre);
+					quit(fenetre);
 					Mix_PlayChannel(-1, hovermusic, 0);
 					e=0;
 				}
 				break;
 			case 6:
-				creditshover (fenetre);
 				if (e==1)
 				{
+					play(fenetre);
+					options(fenetre);
+					creditshover(fenetre);
+					quit(fenetre);
 					Mix_PlayChannel(-1, hovermusic, 0);
 					e=0;
 				}
 				break;
 			case 7:
-				quithover (fenetre);
 				if (e==1)
 				{
+					play(fenetre);
+					options(fenetre);
+					credits(fenetre);
+					quithover(fenetre);
 					Mix_PlayChannel(-1, hovermusic, 0);
 					e=0;
 				}
@@ -119,6 +131,77 @@ int main (int argc, char *argv[])
 					case (SDLK_q):
 						loop = 0;
 						break;
+					case (SDLK_DOWN):
+						if(choix==0)
+						{
+							choix=4;
+							e=1;
+							SDL_Delay(100);						
+						}
+						else if(choix==4)
+						{
+							choix=5;
+							e=1;
+							SDL_Delay(100);					
+						}
+						else if(choix==5)
+						{
+							choix=6;
+							e=1;
+							SDL_Delay(100);					
+						}
+						else if(choix==6)
+						{
+							choix=7;
+							e=1;
+							SDL_Delay(100);					
+						}
+						break;
+					case (SDLK_UP):
+						if(choix==7)
+						{
+							choix=6;
+							e=1;
+							SDL_Delay(100);						
+						}
+						else if(choix==6)
+						{
+							choix=5;
+							e=1;
+							SDL_Delay(100);					
+						}
+						else if(choix==5)
+						{
+							choix=4;
+							e=1;
+							SDL_Delay(100);					
+						}
+						else if(choix==0)
+						{
+							choix=7;
+							e=1;
+							SDL_Delay(100);					
+						}
+						break;
+					case (SDLK_RETURN):
+						if(choix==7)
+						{
+							loop = 0;
+						}
+						else if(choix==6)
+						{
+							choix=3;
+						}
+						else if(choix==5)
+						{
+							choix=2;				
+						}
+						else if(choix==4)
+						{
+							choix=1;				
+						}
+						break;
+
 				}
 				break;
 
