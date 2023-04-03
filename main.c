@@ -4,6 +4,7 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_keysym.h>
 #include <SDL/SDL_mixer.h>
+#include "perso.h"
 
 
 int main (int argc, char *argv[])
@@ -12,8 +13,8 @@ int main (int argc, char *argv[])
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	int x,y,choix=0, e=1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2,full=0;
-	SDL_Surface *fenetre = NULL;
+	int x,y,choix=0, e=1, loop2 = 1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2,full=0, isclicked, keyd, keya;
+	SDL_Surface *fenetre = NULL, *floor;
 	Mix_Music *bgmusic = Mix_LoadMUS("Resources/menu.mp3");
 	Mix_Chunk *hovermusic = Mix_LoadWAV("Resources/slash.wav");
 	int Mix_VolumeMusic(int volume);
@@ -21,7 +22,12 @@ int main (int argc, char *argv[])
 	SDL_Event event;
 	fenetre = SDL_SetVideoMode(900,600,32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
 
-	
+	Uint32 skyblue;
+	skyblue = SDL_MapRGB(fenetre->format,200,255,255);	
+	perso *p = malloc(sizeof(perso));
+	Uint32 prevTicks, dt;
+	prevTicks = SDL_GetTicks();
+
 	//Boucle du jeu
 	while (loop)
 	{
@@ -46,8 +52,68 @@ int main (int argc, char *argv[])
 					text (fenetre);
 					break;
 				}
+				break;
 
 			case 1: //play
+				SDL_FillRect(fenetre,NULL,skyblue);
+				initPerso(p);
+				afficherPerso(p, fenetre);
+				while (loop2)
+				{
+					SDL_PollEvent(&event);
+					if (event.type==SDL_KEYDOWN)
+					{
+						if (event.key.keysym.sym==SDLK_ESCAPE)
+						{
+							loop2=0;
+							choix=0;
+						}
+						if (event.key.keysym.sym==SDLK_d)
+						{
+							keyd = 0;
+							dt = SDL_GetTicks() - prevTicks + 1;
+							p->direction=1;
+							movePerso (p,dt);
+							SDL_FillRect(fenetre,NULL,skyblue);
+							animerPerso (p);
+							afficherPerso(p, fenetre);
+							SDL_Delay(50);
+						}
+						if (event.key.keysym.sym==SDLK_a)
+						{
+							keya = 0;
+							dt = SDL_GetTicks() - prevTicks + 1;
+							p->direction=0;
+							movePerso (p,dt);
+							SDL_FillRect(fenetre,NULL,skyblue);
+							animerPerso (p);
+							afficherPerso(p, fenetre);
+							SDL_Delay(50);
+						}
+						if (event.key.keysym.sym==SDLK_w)
+						{
+							saut (p,fenetre);
+						}
+					}
+					if (event.type==SDL_KEYUP)
+					{
+						if (event.key.keysym.sym==SDLK_d)
+						{
+							keyd = 1;
+						}
+						if (event.key.keysym.sym==SDLK_a)
+						{
+							keya = 1;
+						}
+
+					}
+					if (keya == 1 && keyd == 1)
+					{
+						p->acceleration=0;
+						p->vitesse=1;
+					}
+				prevTicks = SDL_GetTicks();
+				}
 				break;
 
 			case 2: //options
@@ -136,25 +202,25 @@ int main (int argc, char *argv[])
 						{
 							choix=4;
 							e=1;
-							SDL_Delay(100);						
+							SDL_Delay(500);						
 						}
 						else if(choix==4)
 						{
 							choix=5;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						else if(choix==5)
 						{
 							choix=6;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						else if(choix==6)
 						{
 							choix=7;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						break;
 					case (SDLK_UP):
@@ -162,25 +228,25 @@ int main (int argc, char *argv[])
 						{
 							choix=6;
 							e=1;
-							SDL_Delay(100);						
+							SDL_Delay(500);						
 						}
 						else if(choix==6)
 						{
 							choix=5;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						else if(choix==5)
 						{
 							choix=4;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						else if(choix==0)
 						{
 							choix=7;
 							e=1;
-							SDL_Delay(100);					
+							SDL_Delay(500);					
 						}
 						break;
 					case (SDLK_RETURN):
@@ -274,6 +340,7 @@ int main (int argc, char *argv[])
 	}
 
 	//Liberation d'espace
+	SDL_FreeSurface(fenetre);
 	SDL_FreeSurface(fenetre);
 	TTF_Quit();
 	Mix_FreeMusic(bgmusic);
