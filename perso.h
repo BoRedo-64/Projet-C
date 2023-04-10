@@ -17,11 +17,12 @@ typedef struct
 	float jumpspeed;
 }perso;
 
-void init(perso * p, int numperso);
 void initPerso(perso *p);
 void afficherPerso(perso *p, SDL_Surface * fenetre);
 void movePerso (perso *p, Uint32 dt);
 void animerPerso (perso* p);
 void saut (perso* p, SDL_Surface *fenetre);
+void freeperso (perso* p);
+void deceleration (perso* p, int * decel, SDL_Surface *fenetre);
 
 #endif

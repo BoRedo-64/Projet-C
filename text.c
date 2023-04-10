@@ -17,3 +17,4 @@ void text(SDL_Surface *fenetre)
 	SDL_BlitSurface(texte,NULL,fenetre,&textePos);
 	SDL_Flip(fenetre); //refrachir la fenetre
 }
+

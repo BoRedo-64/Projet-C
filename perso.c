@@ -10,9 +10,9 @@
 
 void initPerso(perso *p)
 {
-	p->sprite = IMG_Load("Resources/sprite.png");
-	p->pos.x = 600;
-	p->pos.y = 514;
+	p->sprite = IMG_Load("Resources/sprite2.png");
+	p->pos.x = 10;
+	p->pos.y = 500;
 	p->pos.w = 52;
 	p->pos.h = 85;
 	p->posSprite.x = 0;
@@ -21,11 +21,11 @@ void initPerso(perso *p)
 	p->posSprite.h = 85;
 	p->vie = 0;
 	p->score = 0;
-	p->vitesse = 1; 
-	p->acceleration = 0;
-	p->direction = 0;
+	p->vitesse = 0; 
+	p->acceleration = 2;
+	p->direction = 1;
 	p->up = 0;
-	p->jumpcap = 314;
+	p->jumpcap = 400;
 	p->jumpspeed = 15;
 }
 
@@ -39,16 +39,16 @@ void movePerso (perso *p, Uint32 dt)
 {
 	switch (p->direction)
 	{
-	case 1:
-	p->pos.x += ((fabs(p->acceleration / 2)) * (dt * dt) + (p->vitesse * dt));
-	p->acceleration += 0.1;
-	printf("acceleration: %f\n", fabs(p->acceleration));
-	break;
-	case 0:
-	p->pos.x -= ((fabs(p->acceleration / 2)) * (dt * dt) + (p->vitesse * dt));
-	p->acceleration -= 0.1;
-	printf("acceleration: %f\n", fabs(p->acceleration));
-	break;
+		case 1:
+		p->pos.x += (p->acceleration / 2) * (dt * dt) + (p->vitesse * dt)+1;
+		p->acceleration += 0.01;
+		printf("acceleration: %f\n", (p->acceleration));
+		break;
+		case 0:
+		p->pos.x -= (p->acceleration / 2) * (dt * dt) + (p->vitesse * dt);
+		p->acceleration += 0.01;
+		printf("acceleration: %f\n", (p->acceleration));
+		break;
 	}
 	if (p->pos.x>900 && p->direction==1)
 	{
@@ -58,20 +58,20 @@ void movePerso (perso *p, Uint32 dt)
 	{
 		p->pos.x=900;
 	}
-	if (p->acceleration>20)
+	if (p->acceleration>10)
 	{
-		p->acceleration = 20;
+		p->acceleration = 10;
 	}
-	if (p->acceleration<-20)
+	if (p->acceleration<-10)
 	{
-		p->acceleration = -20;
+		p->acceleration = -10;
 	}
 }
 
 void animerPerso (perso* p)
 {
 	p->posSprite.y =p->direction * (p->posSprite.h);
-  	if (p->posSprite.x == (364 - p->posSprite.w))
+  	if (p->posSprite.x == (572 - p->posSprite.w))
 	{
         	p->posSprite.x  = 0;
 	}
@@ -79,10 +79,12 @@ void animerPerso (perso* p)
   	{
 		p->posSprite.x  = p->posSprite.x + p->posSprite.w;
 	}
+	SDL_Delay(20);
 }
 
 void saut (perso* p, SDL_Surface *fenetre)
 {
+/*
 	int i;
 	if (p->up==0)
 	{
@@ -113,4 +115,109 @@ void saut (perso* p, SDL_Surface *fenetre)
 	}
 	p->up=0;
 	printf("y: %d\n", p->pos.y);
+*/
+	
+	int a,c,x,y;
+	a=3;
+	c=5;
+	x=1;
+	y=p->pos.y;
+	if (p->direction==1)
+	{
+		while (y>p->jumpcap)
+		{
+			y=y-(a*x+c);
+			x+=2;
+			p->pos.x += x+1;
+			p->pos.y = y;
+			SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+			afficherPerso(p, fenetre);
+			SDL_Flip(fenetre);
+			SDL_Delay(45);
+		}
+		x+=4;
+		p->pos.x += x;
+		SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+		afficherPerso(p, fenetre);
+		SDL_Flip(fenetre);
+		SDL_Delay(45);
+		x=1;
+		while (y<500)
+		{
+			y=y+(a*x+c);
+			x+=2;
+			p->pos.x += x+1;
+			p->pos.y = y;
+			SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+			afficherPerso(p, fenetre);
+			SDL_Flip(fenetre);
+			SDL_Delay(45);
+		}
+	}
+	else
+	{
+		while (y>p->jumpcap)
+		{
+			y=y-(a*x+c);
+			x+=2;
+			p->pos.x -= x;
+			p->pos.y = y;
+			SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+			afficherPerso(p, fenetre);
+			SDL_Flip(fenetre);
+			SDL_Delay(45);
+		}
+		x+=4;
+		p->pos.x -= x;
+		SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+		afficherPerso(p, fenetre);
+		SDL_Flip(fenetre);
+		SDL_Delay(45);
+		x=1;
+		x=1;
+		while (y<500)
+		{
+			y=y+(a*x+c);
+			x+=2;
+			p->pos.x -= x;
+			p->pos.y = y;
+			SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+			afficherPerso(p, fenetre);
+			SDL_Flip(fenetre);
+			SDL_Delay(45);
+		}
+	}
+	
 }
+
+void freeperso (perso* p)
+{
+	free (p);
+}
+
+void deceleration (perso* p, int * decel, SDL_Surface *fenetre)
+{
+	while (decel)
+	{
+		if (p->acceleration>2)
+		{
+			p->acceleration -= 0.5;
+			if (p->direction == 1)
+			{
+				p->pos.x += p->acceleration / 2;
+			}
+			else
+			{
+				p->pos.x -= p->acceleration / 2;
+			}
+			SDL_FillRect(fenetre,NULL,SDL_MapRGB(fenetre->format,200,255,255));
+			animerPerso (p);
+			afficherPerso(p, fenetre);
+		}
+		else
+		{
+			decel = 0;
+		}
+	}		
+}
+

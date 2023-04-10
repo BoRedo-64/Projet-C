@@ -13,19 +13,37 @@ int main (int argc, char *argv[])
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	int x,y,choix=0, e=1, loop2 = 1, loop = 1, volume = MIX_MAX_VOLUME / 2, no=1, volume2 = MIX_MAX_VOLUME / 2,full=0, isclicked, keyd, keya;
-	SDL_Surface *fenetre = NULL, *floor;
+	int x, y, choix, e, loop2, loop, volume, no, volume2, full, isclicked, keyd, keya, decel, once;
+	SDL_Surface *fenetre = NULL;
 	Mix_Music *bgmusic = Mix_LoadMUS("Resources/menu.mp3");
 	Mix_Chunk *hovermusic = Mix_LoadWAV("Resources/slash.wav");
 	int Mix_VolumeMusic(int volume);
 	int Mix_VolumeChunk(Mix_Chunk *hovermusic, int volume);
 	SDL_Event event;
+	Uint32 skyblue, prevTicks, dt;
 	fenetre = SDL_SetVideoMode(900,600,32, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-
-	Uint32 skyblue;
+	
+	//Creation texte
+	SDL_Surface *texte2;
+	SDL_Rect texte2Pos;
+	TTF_Font *font2;
+	font2 = TTF_OpenFont("Resources/Font.otf",30);
+	SDL_Color fontBlack2 = {0,0,0};
+	texte2Pos.x=4;
+	texte2Pos.y=2;
+	texte2 = TTF_RenderText_Blended(font2, "Walking", fontBlack2);
+	
+	choix=0;
+	e=1;
+	loop = 1;
+	volume = MIX_MAX_VOLUME / 2;
+	volume2 = MIX_MAX_VOLUME / 2;
+	no=1;
+	full=0;
+	keyd = 1;
+	keya = 1;
 	skyblue = SDL_MapRGB(fenetre->format,200,255,255);	
 	perso *p = malloc(sizeof(perso));
-	Uint32 prevTicks, dt;
 	prevTicks = SDL_GetTicks();
 
 	//Boucle du jeu
@@ -56,8 +74,13 @@ int main (int argc, char *argv[])
 
 			case 1: //play
 				SDL_FillRect(fenetre,NULL,skyblue);
+				SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
 				initPerso(p);
+				p->posSprite.x = 0;
+				p->posSprite.y = (p->posSprite.h);
 				afficherPerso(p, fenetre);
+				once = 0;
+				loop2=1;
 				while (loop2)
 				{
 					SDL_PollEvent(&event);
@@ -75,24 +98,51 @@ int main (int argc, char *argv[])
 							p->direction=1;
 							movePerso (p,dt);
 							SDL_FillRect(fenetre,NULL,skyblue);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
 							animerPerso (p);
 							afficherPerso(p, fenetre);
-							SDL_Delay(50);
+							decel = 1;
+							once = 1;
 						}
-						if (event.key.keysym.sym==SDLK_a)
+						else if (event.key.keysym.sym==SDLK_a)
 						{
 							keya = 0;
 							dt = SDL_GetTicks() - prevTicks + 1;
 							p->direction=0;
 							movePerso (p,dt);
 							SDL_FillRect(fenetre,NULL,skyblue);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
 							animerPerso (p);
 							afficherPerso(p, fenetre);
-							SDL_Delay(50);
+							decel = 1;
+							once = 1;
 						}
 						if (event.key.keysym.sym==SDLK_w)
 						{
 							saut (p,fenetre);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
+							SDL_Flip(fenetre);
+						}
+						if (event.key.keysym.sym==SDLK_LSHIFT)
+						{
+							if (p->vitesse == 0)
+							{
+								p->vitesse = 2;
+								texte2 = TTF_RenderText_Blended(font2, "Running", fontBlack2);
+								SDL_FillRect(fenetre,NULL,skyblue);
+								SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
+								afficherPerso(p, fenetre);
+								SDL_Delay(500);
+							}
+							else 
+							{
+								p->vitesse = 0;
+								texte2 = TTF_RenderText_Blended(font2, "Walking", fontBlack2);
+								SDL_FillRect(fenetre,NULL,skyblue);
+								SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
+								afficherPerso(p, fenetre);
+								SDL_Delay(500);
+							}
 						}
 					}
 					if (event.type==SDL_KEYUP)
@@ -100,20 +150,33 @@ int main (int argc, char *argv[])
 						if (event.key.keysym.sym==SDLK_d)
 						{
 							keyd = 1;
+							deceleration (p,&decel,fenetre);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
 						}
 						if (event.key.keysym.sym==SDLK_a)
 						{
 							keya = 1;
+							deceleration (p,&decel,fenetre);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
 						}
 
 					}
 					if (keya == 1 && keyd == 1)
 					{
-						p->acceleration=0;
-						p->vitesse=1;
+						if (once)
+						{
+							p->acceleration = 2;
+							p->posSprite.x = 0;
+							p->posSprite.y = p->direction * (p->posSprite.h);
+							SDL_FillRect(fenetre,NULL,skyblue);
+							SDL_BlitSurface(texte2,NULL,fenetre,&texte2Pos);
+							afficherPerso(p, fenetre);
+							once = 0;
+						}
 					}
 				prevTicks = SDL_GetTicks();
 				}
+				event.key.keysym.sym=0;
 				break;
 
 			case 2: //options
@@ -340,8 +403,9 @@ int main (int argc, char *argv[])
 	}
 
 	//Liberation d'espace
+	freeperso (p);
 	SDL_FreeSurface(fenetre);
-	SDL_FreeSurface(fenetre);
+	SDL_FreeSurface(texte2);
 	TTF_Quit();
 	Mix_FreeMusic(bgmusic);
 	Mix_FreeChunk(hovermusic);
